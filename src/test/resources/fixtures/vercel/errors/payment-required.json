@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "PAYMENT_REQUIRED",
+    "message": "This feature requires an Observability Plus subscription."
+  }
+}

@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Overlook: o Web Analytics de todos os seus projetos da Vercel num painel só</title>
+<meta name="description" content="Overlook junta o Web Analytics de todos os projetos da sua conta ou time da Vercel num único painel local. Roda na sua máquina, usa a sua Vercel CLI, sem telemetria. Open source, para Windows, macOS e Linux.">
+<meta name="theme-color" content="#100b0e">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Overlook: todos os seus projetos da Vercel num painel só">
+<meta property="og:description" content="Page views, visitantes, páginas, países e referrers de todos os projetos, lado a lado. Roda 100% local, open source.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+  <!-- SEO -->
+  <link rel="canonical" href="https://overlook.serignolli.com/" />
+  <meta property="og:url" content="https://overlook.serignolli.com/" />
+  <meta property="og:image" content="https://overlook.serignolli.com/img/painel-consolidado.png" />
+  <meta property="og:image:width" content="1280" />
+  <meta property="og:image:height" content="860" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:site_name" content="Overlook" />
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Overlook",
+      "description": "Painel local que junta o Web Analytics de todos os projetos de uma conta ou time da Vercel, usando a Vercel CLI.",
+      "applicationCategory": "DeveloperApplication",
+      "inLanguage": "pt-BR",
+      "author": {
+        "@type": "Person",
+        "name": "Gabriel Moreno Serignolli",
+        "url": "https://serignolli.com/"
+      },
+      "creator": {
+        "@type": "Person",
+        "name": "Gabriel Moreno Serignolli",
+        "url": "https://serignolli.com/"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "BRL"
+      },
+      "url": "https://overlook.serignolli.com/",
+      "operatingSystem": "Windows, Linux, macOS",
+      "codeRepository": "https://github.com/Serignolli/overlook"
+    }
+  </script>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="#" class="logo"><img src="/favicon.svg" alt="" width="26" height="26"><span>over<b>look</b></span></a>
+    <div class="nav-links">
+      <a href="#recursos">Recursos</a>
+      <a href="#exemplos">Exemplos</a>
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#download">Download</a>
+      <a href="#privacidade">Privacidade</a>
+      <a class="gh-link" href="https://github.com/Serignolli/overlook" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub
+      </a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="glow" aria-hidden="true"></div>
+  <div class="container">
+    <div class="pill"><span class="dot"></span>open source · MIT · Windows, macOS e Linux</div>
+    <h1>Todos os seus projetos<br>da Vercel, <span class="hl">num painel só</span>.</h1>
+    <p class="lead">O dashboard da Vercel mostra o Web Analytics projeto por projeto. O Overlook junta tudo: page views, visitantes, páginas, países e referrers de todos os projetos da sua conta ou time, lado a lado, rodando na sua máquina.</p>
+    <div class="cta">
+      <a class="btn btn-primary" id="heroDownload" href="https://github.com/Serignolli/overlook/releases/latest">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1a.75.75 0 01.75.75v6.69l2.22-2.22a.75.75 0 111.06 1.06l-3.5 3.5a.75.75 0 01-1.06 0l-3.5-3.5a.75.75 0 111.06-1.06l2.22 2.22V1.75A.75.75 0 018 1zM2.75 13a.75.75 0 000 1.5h10.5a.75.75 0 000-1.5H2.75z"/></svg>
+        <span id="heroDownloadLabel">Baixar a última versão</span>
+      </a>
+      <a class="btn btn-ghost" href="https://github.com/Serignolli/overlook" target="_blank" rel="noopener">Ver código no GitHub</a>
+    </div>
+    <p class="meta"><span>roda 100% local</span><span>sem telemetria</span><span>código aberto</span><span>não precisa instalar Java</span></p>
+
+    <figure class="shot">
+      <div class="shot-bar"><i></i><i></i><i></i><span class="shot-url">127.0.0.1:7878</span></div>
+      <img src="/img/painel-consolidado.png" width="1280" height="860" alt="Tela consolidada do Overlook: cartões de page views, eventos e visitantes, gráfico de linhas com um projeto por linha e ranking de projetos." loading="eager">
+    </figure>
+    <p class="caption">Tela consolidada no modo demo, com dados fictícios.</p>
+  </div>
+</header>
+
+<section id="recursos">
+  <div class="container">
+    <p class="eyebrow">Recursos</p>
+    <h2>Quinze abas abertas no dashboard?<br>Agora é uma só.</h2>
+    <p class="sub">Quem tem muitos projetos na Vercel conhece a rotina: abrir um por um para ver se alguém subiu ou caiu. O Overlook faz isso por você e mostra o resultado numa página.</p>
+    <div class="grid">
+      <div class="card">
+        <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
+        <h3>Visão consolidada</h3>
+        <p>Page views, eventos e visitantes do time inteiro, com variação contra o período anterior e um gráfico com uma linha por projeto.</p>
+      </div>
+      <div class="card">
+        <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h11M4 18h6"/></svg></div>
+        <h3>Ranking de projetos</h3>
+        <p>Quem cresceu, quem caiu e quem parou de receber visitas. Projetos sem dados aparecem marcados, para você conferir se o Web Analytics está ligado.</p>
+      </div>
+      <div class="card">
+        <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div>
+        <h3>Detalhe por projeto</h3>
+        <p>Páginas mais acessadas, referrers, países, dispositivos e eventos customizados, cada um como top N, com um clique a partir do ranking.</p>
+      </div>
+      <div class="card accent">
+        <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <h3>Números honestos</h3>
+        <p>Visitantes únicos nunca são somados entre dias. O dia de hoje aparece como "em andamento" e fica fora das comparações, para não parecer queda.</p>
+      </div>
+      <div class="card">
+        <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l6-6-6-6"/><path d="M12 19h8"/></svg></div>
+        <h3>Usa a sua Vercel CLI</h3>
+        <p>Os dados vêm do <code>vercel metrics</code>, que consulta Web Analytics sem exigir Observability Plus. O login é o da sua CLI; o Overlook não pede token.</p>
+      </div>
+      <div class="card">
+        <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.5.5l3-3a5 5 0 00-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 00-7.5-.5l-3 3a5 5 0 007 7l1.7-1.7"/></svg></div>
+        <h3>Filtros que viram link</h3>
+        <p>Escopo, período (24h, 7, 30, 90 dias ou personalizado), produção ou todos os ambientes e seleção de projetos ficam na URL. Salve o link da sua visão favorita.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="exemplos">
+  <div class="container">
+    <p class="eyebrow">Exemplos</p>
+    <h2>O que você vê na tela.</h2>
+    <p class="sub">Os gráficos abaixo são exemplos interativos, com dados fictícios. Passe o mouse para ver os valores. No app, tudo isso vem da sua conta.</p>
+
+    <div class="examples">
+      <article class="ex ex-wide">
+        <header>
+          <h3>Comparativo entre projetos</h3>
+          <p>Uma linha por projeto, os 8 maiores mais "outros". A faixa clara no fim marca o dia em andamento.</p>
+        </header>
+        <div class="ex-chart" id="exLines" role="img" aria-label="Gráfico de linhas com page views diários de cinco projetos ao longo de 14 dias"></div>
+        <div class="ex-legend" id="exLinesLegend"></div>
+      </article>
+
+      <article class="ex">
+        <header>
+          <h3>Cartões com variação</h3>
+          <p>Total do período e variação contra o período anterior, comparando só dias fechados.</p>
+        </header>
+        <div class="ex-cards">
+          <div class="ex-card"><span>Page views</span><strong>541.359</strong><em class="up">▲ 8,4%</em></div>
+          <div class="ex-card"><span>Eventos</span><strong>37.908</strong><em class="down">▼ 2,1%</em></div>
+          <div class="ex-card"><span>Soma dos visitantes por projeto</span><strong>139.328</strong><em class="up">▲ 5,7%</em>
+            <small>A mesma pessoa pode contar mais de uma vez.</small></div>
+        </div>
+      </article>
+
+      <article class="ex">
+        <header>
+          <h3>Ranking com variação</h3>
+          <p>Barras proporcionais, ordenadas por page views. Clique num projeto para abrir o detalhe.</p>
+        </header>
+        <div class="ex-ranking" id="exRanking"></div>
+      </article>
+
+      <article class="ex">
+        <header>
+          <h3>De onde vêm as visitas</h3>
+          <p>Top países, páginas, referrers e dispositivos de cada projeto.</p>
+        </header>
+        <div class="ex-bars" id="exCountries"></div>
+      </article>
+
+      <article class="ex">
+        <header>
+          <h3>Série de um projeto</h3>
+          <p>Page views por dia de um projeto, com o bucket de hoje destacado.</p>
+        </header>
+        <div class="ex-chart small" id="exArea" role="img" aria-label="Gráfico de área com page views diários de um projeto"></div>
+      </article>
+    </div>
+
+    <div class="gallery">
+      <figure>
+        <img src="/img/painel-projeto.png" width="1280" height="1758" alt="Tela de um projeto no Overlook com gráfico de page views e tabelas de páginas, referrers, países, dispositivos e eventos." loading="lazy">
+        <figcaption>Tela de projeto: série diária e os tops de cada dimensão.</figcaption>
+      </figure>
+      <figure>
+        <img src="/img/painel-claro.png" width="1280" height="860" alt="Tela consolidada do Overlook no tema claro." loading="lazy">
+        <figcaption>Segue o tema do seu sistema: claro ou escuro.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="como-funciona">
+  <div class="container">
+    <p class="eyebrow">Como funciona</p>
+    <h2>Três passos, sem conta nova.</h2>
+    <p class="sub">Não tem cadastro nem servidor nosso no meio. O Overlook é um app local que pergunta à sua Vercel CLI e mostra a resposta no navegador.</p>
+    <div class="flow">
+      <div class="step">
+        <h3>Logue na Vercel CLI</h3>
+        <p>Se ainda não tem: <code class="mono">npm i -g vercel</code> e <code class="mono">vercel login</code>. O Web Analytics precisa estar ativado nos projetos.</p>
+      </div>
+      <div class="step">
+        <h3>Abra o Overlook</h3>
+        <p>Baixe o arquivo do seu sistema, descompacte e abra. Ele sobe em <code class="mono">127.0.0.1:7878</code> e abre o navegador sozinho.</p>
+      </div>
+      <div class="step">
+        <h3>Compare</h3>
+        <p>Escolha o time e o período. Clique num projeto para ver páginas, países e referrers. Para fechar, use o ícone na bandeja ou o botão nas configurações.</p>
+      </div>
+    </div>
+
+    <div class="pipeline" aria-label="Fluxo de dados">
+      <span class="node">Vercel</span>
+      <span class="arrow">⇄</span>
+      <span class="node">vercel metrics <small>sua CLI, seu login</small></span>
+      <span class="arrow">→</span>
+      <span class="node acc">overlook <small>127.0.0.1</small></span>
+      <span class="arrow">→</span>
+      <span class="node acc">painel no navegador</span>
+    </div>
+  </div>
+</section>
+
+<section id="download">
+  <div class="container">
+    <p class="eyebrow">Download</p>
+    <h2>Escolha seu sistema.</h2>
+    <p class="sub">Cada pacote já traz o Java embutido, então não precisa instalar nada além da Vercel CLI. Os links apontam sempre para a release mais recente no GitHub.</p>
+    <div class="dl">
+      <a data-os="windows" href="https://github.com/Serignolli/overlook/releases/latest/download/overlook-windows-x64.zip">
+        <span class="os">Windows <span class="you">· seu sistema</span></span>
+        <span class="file">overlook-windows-x64.zip</span>
+      </a>
+      <a data-os="mac-arm" href="https://github.com/Serignolli/overlook/releases/latest/download/overlook-macos-arm64.zip">
+        <span class="os">macOS Apple Silicon <span class="you">· seu sistema</span></span>
+        <span class="file">overlook-macos-arm64.zip</span>
+      </a>
+      <a data-os="mac-intel" href="https://github.com/Serignolli/overlook/releases/latest/download/overlook-macos-x64.zip">
+        <span class="os">macOS Intel <span class="you">· seu sistema</span></span>
+        <span class="file">overlook-macos-x64.zip</span>
+      </a>
+      <a data-os="linux" href="https://github.com/Serignolli/overlook/releases/latest/download/overlook-linux-x64.tar.gz">
+        <span class="os">Linux x64 <span class="you">· seu sistema</span></span>
+        <span class="file">overlook-linux-x64.tar.gz</span>
+      </a>
+    </div>
+    <p class="note">Também tem o <a href="https://github.com/Serignolli/overlook/releases/latest/download/overlook.jar"><code>overlook.jar</code></a> para qualquer sistema com Java 21+. Cada arquivo tem um <code>.sha256</code> ao lado na <a href="https://github.com/Serignolli/overlook/releases/latest" target="_blank" rel="noopener">página da release</a>.</p>
+
+    <div class="first-run">
+      <div>
+        <h3>Primeira vez abrindo</h3>
+        <p>Os pacotes ainda não são assinados digitalmente, então o sistema avisa na primeira vez:</p>
+        <ul>
+          <li><strong>Windows:</strong> descompacte e abra <code>Overlook.exe</code>. Se aparecer o SmartScreen, clique em <em>Mais informações → Executar assim mesmo</em>.</li>
+          <li><strong>macOS:</strong> descompacte e arraste <code>Overlook.app</code> para Aplicativos. Na primeira vez, clique com o botão direito e escolha <em>Abrir</em>.</li>
+          <li><strong>Linux:</strong> <code>tar xzf overlook-linux-x64.tar.gz</code> e rode <code>./Overlook/bin/Overlook</code>.</li>
+        </ul>
+      </div>
+      <div class="code">
+        <div class="code-head"><span>compilar do código-fonte</span><button class="copy" data-copy="build">copiar</button></div>
+<pre id="build"><span class="p">$ </span>git clone https://github.com/Serignolli/overlook
+<span class="p">$ </span>cd overlook
+<span class="p">$ </span>mvn verify
+<span class="p">$ </span>java -jar target/overlook.jar</pre>
+      </div>
+    </div>
+    <p class="note">Requer Java 21+ e Maven para compilar. Quer só olhar antes? Rode com <code>--demo</code> e veja o painel com dados fictícios, sem CLI nem conta.</p>
+  </div>
+</section>
+
+<section id="privacidade">
+  <div class="container">
+    <p class="eyebrow">Privacidade e segurança</p>
+    <h2>Seus números não passam por ninguém.</h2>
+    <p class="sub">Analytics é dado do seu negócio. O Overlook não tem servidor, não pede conta e não coleta nada. Ele conversa só com a sua Vercel CLI, que conversa só com a Vercel.</p>
+
+    <div class="trust">
+      <div class="boundary" aria-label="Diagrama: o Overlook roda dentro do seu computador e só a Vercel CLI fala com a Vercel">
+        <span class="boundary-label">seu computador</span>
+        <div class="b-row">
+          <span class="node">navegador</span>
+          <span class="b-arrow">⇅</span>
+          <span class="node acc">overlook <small>127.0.0.1:7878</small></span>
+          <span class="b-arrow">⇅</span>
+          <span class="node">vercel CLI <small>seu login</small></span>
+        </div>
+        <div class="b-ok"><span class="b-check">✓</span> a CLI fala com a Vercel, como quando você usa no terminal</div>
+        <div class="b-out"><span class="b-x">✕</span> servidores do Overlook, telemetria, analytics, CDN</div>
+      </div>
+
+      <div class="oss">
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg></div>
+        <h3>Código aberto: não precisa confiar, dá para conferir.</h3>
+        <p>Uma ferramenta que roda comandos na sua conta da Vercel precisa ser transparente. O código está todo no GitHub, e os pontos sensíveis ficam em poucos arquivos pequenos. Testes automáticos garantem que o app não abre conexões de rede próprias e que só o gateway da Vercel executa processos.</p>
+        <div class="oss-links">
+          <a href="https://github.com/Serignolli/overlook/blob/main/src/main/java/dev/overlook/vercel/CliRunner.java" target="_blank" rel="noopener"><code>CliRunner.java</code> como a CLI é executada</a>
+          <a href="https://github.com/Serignolli/overlook/blob/main/src/main/java/dev/overlook/web/WebServer.java" target="_blank" rel="noopener"><code>WebServer.java</code> servidor só em 127.0.0.1</a>
+          <a href="https://github.com/Serignolli/overlook/blob/main/src/test/java/dev/overlook/arch/ArchitectureTest.java" target="_blank" rel="noopener"><code>ArchitectureTest.java</code> as garantias, testadas</a>
+        </div>
+        <p class="oss-note">Se preferir, <a href="#download">compile você mesmo</a> a partir do código-fonte em vez de baixar o pacote.</p>
+      </div>
+    </div>
+
+    <ul class="sec">
+      <li><div><strong>Nunca toca no seu token.</strong> <span>O login é da Vercel CLI. O Overlook não lê o arquivo de credenciais e nunca passa <code>--token</code> na linha de comando, onde ele apareceria na lista de processos.</span></div></li>
+      <li><div><strong>Só você acessa.</strong> <span>O servidor escuta apenas em <code>127.0.0.1</code>, valida o cabeçalho <code>Host</code> contra DNS rebinding e exige um token para qualquer ação que mude algo.</span></div></li>
+      <li><div><strong>Zero telemetria.</strong> <span>Sem analytics do app, sem crash report e sem checagem de versão. A telemetria da própria CLI é desligada quando o Overlook a chama.</span></div></li>
+      <li><div><strong>Logs limpos.</strong> <span>Qualquer coisa com cara de token é mascarada antes de ir para o log local, e o painel nunca mostra a saída crua da CLI.</span></div></li>
+    </ul>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="container">
+    <p class="eyebrow">Perguntas frequentes</p>
+    <h2>Antes de baixar.</h2>
+    <div class="faq">
+      <details>
+        <summary>Preciso de plano pago ou Observability Plus?</summary>
+        <p>Não. Desde junho de 2026 o <code>vercel metrics</code> consulta Web Analytics sem Observability Plus. Você precisa só do Web Analytics ativado nos projetos. Edge Requests, essas sim, exigem Observability Plus e não aparecem no Overlook.</p>
+      </details>
+      <details>
+        <summary>Por que "soma dos visitantes por projeto" e não "visitantes únicos"?</summary>
+        <p>Porque a mesma pessoa pode visitar mais de um projeto. Somar únicos de projetos diferentes conta essa pessoa duas vezes, então o Overlook dá o nome certo ao número. Dentro de um projeto, o total de únicos do período vem direto da Vercel, nunca da soma dos dias.</p>
+      </details>
+      <details>
+        <summary>Por que a variação ignora o dia de hoje?</summary>
+        <p>O dia corrente ainda não terminou. Comparar meio dia com um dia inteiro sempre parece queda. O Overlook marca o bucket atual como "em andamento" e compara só dias fechados.</p>
+      </details>
+      <details>
+        <summary>Tem bounce rate?</summary>
+        <p>Não. A Vercel não expõe bounce rate pela CLI, então ele continua só no dashboard da Vercel.</p>
+      </details>
+      <details>
+        <summary>O Overlook guarda meus dados?</summary>
+        <p>Nesta versão, não: ele consulta a Vercel na hora e guarda só um cache em memória de 5 minutos. Um histórico local opcional, para manter dados além da retenção do plano, está no plano das próximas versões.</p>
+      </details>
+      <details>
+        <summary>É um produto da Vercel?</summary>
+        <p>Não. O Overlook é um projeto independente e open source, sem vínculo com a Vercel.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="container">
+    <h2>Pare de abrir projeto por projeto.</h2>
+    <p class="sub">Baixe, abra e veja todos os seus projetos da Vercel lado a lado.</p>
+    <div class="cta">
+      <a class="btn btn-primary" href="#download">Baixar o Overlook</a>
+      <a class="btn btn-ghost" href="https://github.com/Serignolli/overlook/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">Contribuir</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <span>open source · <a href="https://github.com/Serignolli/overlook/blob/main/LICENSE" target="_blank" rel="noopener">licença MIT</a> · sem vínculo com a Vercel</span>
+    <span class="credit">
+      Desenvolvido por <a href="https://serignolli.com" target="_blank" rel="noopener noreferrer">Serignolli</a>
+      · <a href="https://buymeacoffee.com/gabrielserignolli" target="_blank" rel="noopener noreferrer">Apoie o projeto</a>
+    </span>
+  </div>
+</footer>
+
+<!-- Aparece só no primeiro download (ver main.js) -->
+<dialog class="support" id="support" aria-labelledby="supportTitle">
+  <div class="support-body">
+    <h2 id="supportTitle">Download a caminho<em>!</em></h2>
+    <p>Valeu por baixar o Overlook. Ele é gratuito, open source e sem anúncios. Se ele te poupar a ronda diária pelos projetos no dashboard, considere contribuir com um café para ajudar a manter o projeto.</p>
+    <p>E aproveite para conhecer mais sobre mim e meus outros projetos.</p>
+    <div class="support-actions">
+      <a class="btn btn-primary" href="https://buymeacoffee.com/gabrielserignolli" target="_blank" rel="noopener noreferrer">Contribuir</a>
+      <a class="btn btn-ghost" href="https://serignolli.com" target="_blank" rel="noopener noreferrer">Conhecer serignolli.com</a>
+    </div>
+    <button class="support-close" id="supportClose" type="button">Agora não</button>
+  </div>
+</dialog>
+
+<script src="/main.js" defer></script>
+</body>
+</html>

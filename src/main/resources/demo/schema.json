@@ -1,0 +1,16 @@
+[
+  {
+    "id": "vercel.analytics.event.count",
+    "description": "Number of custom Web Analytics events.",
+    "dimensions": ["projectId", "environment", "eventName", "requestPath", "country", "deviceType", "osName", "clientName", "referrerHostname"],
+    "unit": "count",
+    "aggregations": ["sum", "persecond", "percent", "unique"]
+  },
+  {
+    "id": "vercel.analytics.page_view.count",
+    "description": "Number of page views.",
+    "dimensions": ["projectId", "environment", "requestPath", "route", "country", "deviceType", "osName", "clientName", "referrerHostname", "utmSource", "utmMedium", "utmCampaign", "visitorId"],
+    "unit": "count",
+    "aggregations": ["sum", "persecond", "percent", "unique"]
+  }
+]

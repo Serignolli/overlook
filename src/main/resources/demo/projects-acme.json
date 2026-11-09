@@ -1,0 +1,18 @@
+{
+  "projects": [
+    { "name": "marketing-site", "id": "prj_demoMarketing000000000001", "latestProductionUrl": "https://marketing-site.example.com", "updatedAt": 1790000000000, "nodeVersion": "22.x", "deprecated": false },
+    { "name": "docs", "id": "prj_demoDocs00000000000000002", "latestProductionUrl": "https://docs.example.com", "updatedAt": 1790000000000, "nodeVersion": "22.x", "deprecated": false },
+    { "name": "blog", "id": "prj_demoBlog00000000000000003", "latestProductionUrl": "https://blog.example.com", "updatedAt": 1790000000000, "nodeVersion": "22.x", "deprecated": false },
+    { "name": "dashboard", "id": "prj_demoDashboard00000000004", "latestProductionUrl": "https://app.example.com", "updatedAt": 1790000000000, "nodeVersion": "22.x", "deprecated": false },
+    { "name": "shop", "id": "prj_demoShop00000000000000005", "latestProductionUrl": "https://shop.example.com", "updatedAt": 1790000000000, "nodeVersion": "22.x", "deprecated": false },
+    { "name": "careers", "id": "prj_demoCareers0000000000006", "latestProductionUrl": "https://careers.example.com", "updatedAt": 1790000000000, "nodeVersion": "22.x", "deprecated": false },
+    { "name": "status-page", "id": "prj_demoStatus00000000000007", "latestProductionUrl": "https://status.example.com", "updatedAt": 1790000000000, "nodeVersion": "22.x", "deprecated": false },
+    { "name": "changelog", "id": "prj_demoChangelog00000000008", "latestProductionUrl": "https://changelog.example.com", "updatedAt": 1790000000000, "nodeVersion": "22.x", "deprecated": false },
+    { "name": "landing-black-friday", "id": "prj_demoLandingBf0000000009", "latestProductionUrl": "https://bf.example.com", "updatedAt": 1790000000000, "nodeVersion": "22.x", "deprecated": false },
+    { "name": "api-playground", "id": "prj_demoPlayground000000010", "latestProductionUrl": "https://play.example.com", "updatedAt": 1790000000000, "nodeVersion": "22.x", "deprecated": false },
+    { "name": "internal-tools", "id": "prj_demoInternal00000000011", "latestProductionUrl": null, "updatedAt": 1790000000000, "nodeVersion": "22.x", "deprecated": false }
+  ],
+  "pagination": { "count": 11, "next": null, "prev": null },
+  "contextName": "acme",
+  "elapsed": "312ms"
+}

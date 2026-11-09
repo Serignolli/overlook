@@ -1,0 +1,9 @@
+{
+  "projects": [
+    { "name": "portfolio", "id": "prj_demoPortfolio00000000101", "latestProductionUrl": "https://portfolio.example.com", "updatedAt": 1790000000000, "nodeVersion": "22.x", "deprecated": false },
+    { "name": "side-project", "id": "prj_demoSide000000000000102", "latestProductionUrl": "https://side.example.com", "updatedAt": 1790000000000, "nodeVersion": "22.x", "deprecated": false }
+  ],
+  "pagination": { "count": 2, "next": null, "prev": null },
+  "contextName": "demo-user",
+  "elapsed": "201ms"
+}

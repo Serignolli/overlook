@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "RATE_LIMITED",
+    "message": "You have reached the metrics query rate limit. Please wait and try again. If you need a higher limit, request one from your Vercel account team."
+  }
+}

@@ -1,0 +1,17 @@
+Overlook includes or depends on the following third-party components:
+
+uPlot 1.6.31 (MIT) - https://github.com/leeoniya/uPlot
+  Vendored in src/main/resources/web/vendor/uplot/ (license file in the same folder).
+
+Javalin 6.7.0 (Apache-2.0) - https://javalin.io
+Eclipse Jetty 11.0.25 (EPL-2.0 / Apache-2.0) - https://eclipse.dev/jetty/
+Kotlin stdlib 1.9.25 (Apache-2.0) - transitive dependency of Javalin
+Jackson 2.19.2 (Apache-2.0) - https://github.com/FasterXML/jackson
+SLF4J 2.0.17 (MIT) - https://www.slf4j.org
+
+The packaged downloads (overlook-<platform>.zip / .tar.gz) also bundle a minimal
+Java runtime built with jlink from Eclipse Temurin 21
+(GPL-2.0 with Classpath Exception) - https://adoptium.net
+
+Test-only:
+JUnit 5.12.2 (EPL-2.0), AssertJ 3.27.3 (Apache-2.0), ArchUnit 1.4.1 (Apache-2.0)

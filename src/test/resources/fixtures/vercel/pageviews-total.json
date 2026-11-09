@@ -1,0 +1,19 @@
+{
+  "query": {
+    "metric": "vercel.analytics.page_view.count",
+    "aggregation": "sum",
+    "groupBy": [],
+    "filter": "environment:production",
+    "startTime": "2026-10-01T00:00:00.000Z",
+    "endTime": "2026-10-04T00:00:00.000Z",
+    "granularity": { "days": 1 }
+  },
+  "summary": [
+    { "vercel_analytics_page_view_count_sum": 3600 }
+  ],
+  "data": [
+    { "timestamp": "2026-10-01T00:00:00.000Z", "vercel_analytics_page_view_count_sum": 1000 },
+    { "timestamp": "2026-10-02T00:00:00.000Z", "vercel_analytics_page_view_count_sum": 1200 },
+    { "timestamp": "2026-10-03T00:00:00.000Z", "vercel_analytics_page_view_count_sum": 1400 }
+  ]
+}

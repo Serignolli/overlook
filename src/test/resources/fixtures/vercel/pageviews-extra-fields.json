@@ -1,0 +1,20 @@
+Update available! v63.1.0 ≫ v64.0.0
+{
+  "query": {
+    "metric": "vercel.analytics.page_view.count",
+    "aggregation": "unique/visitorId",
+    "groupBy": ["projectId"],
+    "startTime": 1790812800000,
+    "endTime": "2026-10-03T00:00:00+00:00",
+    "granularity": { "days": 1 },
+    "brandNewOption": "ignored"
+  },
+  "summary": [
+    { "projectId": "prj_aaa", "vercel_analytics_page_view_count_unique_visitorId": 42, "confidence": "high" }
+  ],
+  "data": [
+    { "timestamp": "2026-10-01T00:00:00Z", "projectId": "prj_aaa", "vercel_analytics_page_view_count_unique_visitorId": 30, "note": "x" },
+    { "timestamp": "2026-10-02T00:00:00Z", "projectId": "prj_aaa", "vercel_analytics_page_view_count_unique_visitorId": null }
+  ],
+  "statistics": { "rowsRead": 1234 }
+}

@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "SCHEMA_UNAUTHORIZED",
+    "message": "The metrics schema API request was not authorized. Run `vercel login` to authenticate and `vercel switch` to select a team, then try again."
+  }
+}

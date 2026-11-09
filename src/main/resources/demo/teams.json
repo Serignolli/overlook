@@ -1,0 +1,7 @@
+{
+  "teams": [
+    { "id": "team_demoAcme000000000000", "slug": "acme", "name": "Acme Studio", "plan": "pro", "current": true },
+    { "id": "user_demoPersonal0000000", "slug": "demo-user", "name": "demo@example.com", "plan": "hobby", "current": false }
+  ],
+  "pagination": { "count": 2, "next": null, "prev": null }
+}

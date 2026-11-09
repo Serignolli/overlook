@@ -1,0 +1,8 @@
+{
+  "query": {
+    "metric": "vercel.analytics.page_view.count",
+    "aggregation": "sum",
+    "groupBy": []
+  },
+  "data": []
+}

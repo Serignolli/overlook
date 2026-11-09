@@ -1,0 +1,65 @@
+name: Bug report
+description: Something doesn't work as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. For security issues, please use
+        [a private report](https://github.com/Serignolli/overlook/security/advisories/new) instead.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open Overlook
+        2. Select team ...
+        3. ...
+  - type: input
+    id: overlook-version
+    attributes:
+      label: Overlook version
+      description: Output of `overlook --version`
+    validations:
+      required: true
+  - type: input
+    id: cli-version
+    attributes:
+      label: Vercel CLI version
+      description: Output of `vercel --version`
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Windows
+        - macOS (Apple Silicon)
+        - macOS (Intel)
+        - Linux
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: How do you run Overlook?
+      options:
+        - Packaged app (zip / tar.gz)
+        - overlook.jar
+        - Built from source
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log lines
+      description: |
+        From `logs/overlook.log` in `~/.overlook/` or `%APPDATA%\overlook\`.
+        Tokens are masked, but please review before pasting.
+      render: text

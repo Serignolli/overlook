@@ -1,0 +1,5 @@
+# Todos os robôs liberados: buscadores (Google, Bing) e IAs (ChatGPT, Claude, Perplexity).
+User-agent: *
+Allow: /
+
+Sitemap: https://overlook.serignolli.com/sitemap.xml

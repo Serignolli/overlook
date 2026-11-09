@@ -1,0 +1,9 @@
+{
+  "projects": [
+    { "name": "site", "id": "prj_aaa", "latestProductionUrl": "https://site.example.com", "updatedAt": 1790000000000, "nodeVersion": "22.x", "deprecated": false },
+    { "name": "docs", "id": "prj_bbb", "latestProductionUrl": null, "updatedAt": 1790000000000, "nodeVersion": null, "deprecated": false }
+  ],
+  "pagination": { "count": 2, "next": 1789990000000, "prev": null },
+  "contextName": "acme",
+  "elapsed": "200ms"
+}

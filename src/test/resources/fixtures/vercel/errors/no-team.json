@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "NO_TEAM",
+    "message": "No team context found. Run `vercel switch` to select a team, or use `vercel link` in a project directory."
+  }
+}

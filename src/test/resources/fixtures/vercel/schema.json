@@ -1,0 +1,18 @@
+[
+  {
+    "id": "vercel.analytics.event.count",
+    "description": "Number of custom Web Analytics events.",
+    "dimensions": [{ "name": "projectId", "type": "string" }, { "name": "eventName", "type": "string" }, "country"],
+    "unit": "count",
+    "aggregations": ["sum", "persecond", "percent", "unique"],
+    "someFutureField": { "nested": true }
+  },
+  {
+    "id": "vercel.analytics.page_view.count",
+    "description": "Number of page views.",
+    "dimensions": ["projectId", "environment", "requestPath", "country", "deviceType", "referrerHostname", "visitorId"],
+    "unit": "count",
+    "aggregations": ["sum", "persecond", "percent", "unique"],
+    "defaultAggregation": "sum"
+  }
+]

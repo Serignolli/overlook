@@ -1,0 +1,7 @@
+{
+  "teams": [
+    { "id": "team_abc123", "slug": "acme", "name": "Acme", "plan": "pro", "current": true },
+    { "id": "user_xyz789", "slug": "jane", "name": "jane@example.com", "plan": "hobby", "current": false }
+  ],
+  "pagination": { "count": 2, "next": null, "prev": null }
+}

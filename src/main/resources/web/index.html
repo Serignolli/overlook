@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="overlook-csrf" content="__OVERLOOK_CSRF__">
+  <meta name="overlook-demo" content="__OVERLOOK_DEMO__">
+  <title>Overlook</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="vendor/uplot/uPlot.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./" id="brand-link">
+      <img src="favicon.svg" alt="" class="brand-mark" width="24" height="24">
+      <span>Overlook</span>
+      <span class="badge" id="demo-badge" hidden>demo</span>
+    </a>
+    <div class="filters" role="toolbar" aria-label="Filtros">
+      <label class="field">
+        <span class="field-label">Escopo</span>
+        <select id="scope-select" aria-label="Escopo"></select>
+      </label>
+      <div class="segmented" id="range-group" role="radiogroup" aria-label="Período">
+        <button type="button" role="radio" data-range="24h">24h</button>
+        <button type="button" role="radio" data-range="7d">7d</button>
+        <button type="button" role="radio" data-range="30d">30d</button>
+        <button type="button" role="radio" data-range="90d">90d</button>
+        <button type="button" role="radio" data-range="custom">Personalizado</button>
+      </div>
+      <div class="custom-range" id="custom-range" hidden>
+        <input type="date" id="since-input" aria-label="Data inicial">
+        <span aria-hidden="true">–</span>
+        <input type="date" id="until-input" aria-label="Data final">
+        <button type="button" class="btn small" id="apply-custom">Aplicar</button>
+      </div>
+      <div class="segmented" id="env-group" role="radiogroup" aria-label="Ambiente">
+        <button type="button" role="radio" data-env="production">Produção</button>
+        <button type="button" role="radio" data-env="all">Todos</button>
+      </div>
+      <details class="project-picker" id="project-picker">
+        <summary class="btn"><span id="project-picker-label">Todos os projetos</span></summary>
+        <div class="picker-panel">
+          <div class="picker-actions">
+            <button type="button" class="link" id="picker-all">Todos</button>
+            <button type="button" class="link" id="picker-none">Limpar</button>
+          </div>
+          <div class="picker-list" id="picker-list"></div>
+        </div>
+      </details>
+    </div>
+    <div class="topbar-actions">
+      <button type="button" class="btn icon" id="refresh-btn" title="Atualizar (ignora cache)" aria-label="Atualizar">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
+      </button>
+      <button type="button" class="btn icon" id="settings-btn" title="Configurações" aria-label="Configurações">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div id="health-banner" class="banner" hidden></div>
+  <div id="warnings" class="warnings" hidden></div>
+
+  <main id="view-overview" class="view" hidden>
+    <section class="cards" id="cards" aria-label="Totais"></section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Page views por projeto</h2>
+        <span class="muted small" id="chart-note"></span>
+      </div>
+      <div class="chart" id="overview-chart"></div>
+      <div class="legend" id="overview-legend"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Ranking de projetos</h2>
+        <span class="muted small">variação contra o período anterior, só com dias fechados</span>
+      </div>
+      <div id="ranking"></div>
+    </section>
+  </main>
+
+  <main id="view-project" class="view" hidden>
+    <nav class="crumbs">
+      <a href="./" id="back-link">← Todos os projetos</a>
+    </nav>
+    <div class="project-head">
+      <h1 id="project-title"></h1>
+      <a id="project-url" class="muted" target="_blank" rel="noopener noreferrer"></a>
+    </div>
+    <section class="cards" id="project-cards" aria-label="Totais do projeto"></section>
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Page views</h2>
+        <span class="muted small" id="project-chart-note"></span>
+      </div>
+      <div class="chart" id="project-chart"></div>
+    </section>
+    <section class="breakdowns" id="breakdowns"></section>
+  </main>
+
+  <footer class="footer">
+    <span>Overlook <span id="app-version"></span> roda só nesta máquina. Projeto independente, sem vínculo com a Vercel.</span>
+    <span id="fetched-at" class="muted"></span>
+    <span>open source · criado por <a href="https://github.com/Serignolli" target="_blank" rel="noopener noreferrer">Gabriel Serignolli</a>
+      · <a href="https://buymeacoffee.com/gabrielserignolli" target="_blank" rel="noopener noreferrer">Apoie o projeto</a></span>
+  </footer>
+
+  <dialog id="settings-dialog" aria-labelledby="settings-title">
+    <form method="dialog" id="settings-form" class="settings">
+      <h2 id="settings-title">Configurações</h2>
+      <p class="muted small" id="settings-path"></p>
+
+      <fieldset>
+        <legend>Padrões</legend>
+        <label>Escopo padrão <input name="defaultScope" required pattern="[A-Za-z0-9_.\-]+" placeholder="personal"></label>
+        <label>Período padrão
+          <select name="defaultRange">
+            <option value="24h">24h</option><option value="7d">7d</option>
+            <option value="30d">30d</option><option value="90d">90d</option>
+          </select>
+        </label>
+        <label class="check"><input type="checkbox" name="productionOnly"> Só produção (<code>--prod</code>)</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Vercel CLI</legend>
+        <label>Caminho da CLI <input name="vercelCliPath" placeholder="detectado no PATH"></label>
+        <p class="muted small">Use se a CLI foi instalada fora do PATH. O app nunca lê o login da CLI.</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Atualização automática</legend>
+        <label class="check"><input type="checkbox" name="autoRefreshEnabled"> Atualizar enquanto o painel está aberto</label>
+        <label>Intervalo (minutos, mínimo 15) <input type="number" name="autoRefreshInterval" min="15" step="1"></label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Servidor</legend>
+        <label>Porta <input type="number" name="port" min="1024" max="65535"></label>
+        <label class="check"><input type="checkbox" name="openBrowserOnStart"> Abrir o navegador ao iniciar</label>
+        <p class="muted small">O servidor escuta só em 127.0.0.1. Mudar a porta exige reiniciar.</p>
+      </fieldset>
+
+      <fieldset disabled>
+        <legend>Histórico local</legend>
+        <p class="muted small">Chega na próxima fase. Nada é gravado em disco além de <code>config.json</code> e dos logs.</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Limitações por plano</legend>
+        <ul class="muted small notes">
+          <li>Edge Requests exigem Observability Plus e não aparecem no painel.</li>
+          <li>Bounce rate não está disponível pela CLI.</li>
+        </ul>
+      </fieldset>
+
+      <fieldset>
+        <legend>Encerrar</legend>
+        <p class="muted small">Fecha o servidor local. Para abrir de novo, rode o Overlook outra vez.</p>
+        <div><button type="button" class="btn danger" id="shutdown-btn">Encerrar Overlook</button></div>
+      </fieldset>
+
+      <p class="form-error" id="settings-error" role="alert"></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn" id="settings-cancel">Cancelar</button>
+        <button type="submit" class="btn primary" id="settings-save">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>

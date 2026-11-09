@@ -1,0 +1,23 @@
+# Build output
+target/
+build/
+dist/
+
+# IDEs and editors
+.idea/
+*.iml
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Vercel (landing page in site/)
+.vercel/
+
+# Local tooling
+.playwright-mcp/
+node_modules/
+*.log
