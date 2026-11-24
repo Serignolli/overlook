@@ -23,6 +23,7 @@
         <span class="field-label">Escopo</span>
         <select id="scope-select" aria-label="Escopo"></select>
       </label>
+      <span class="badge" id="plan-badge" hidden></span>
       <div class="segmented" id="range-group" role="radiogroup" aria-label="Período">
         <button type="button" role="radio" data-range="24h">24h</button>
         <button type="button" role="radio" data-range="7d">7d</button>
@@ -102,13 +103,17 @@
       <div class="chart" id="project-chart"></div>
     </section>
     <section class="breakdowns" id="breakdowns"></section>
+    <details class="more-details" id="more-details">
+      <summary>Mais detalhes: sistemas, navegadores, domínios e UTM</summary>
+      <section class="breakdowns" id="breakdowns-extra"></section>
+    </details>
   </main>
 
   <footer class="footer">
     <span>Overlook <span id="app-version"></span> roda só nesta máquina. Projeto independente, sem vínculo com a Vercel.</span>
     <span id="fetched-at" class="muted"></span>
     <span>open source · criado por <a href="https://github.com/Serignolli" target="_blank" rel="noopener noreferrer">Gabriel Serignolli</a>
-      · <a href="https://buymeacoffee.com/gabrielserignolli" target="_blank" rel="noopener noreferrer">Apoie o projeto</a></span>
+      · <a href="https://apoie.serignolli.com/" target="_blank" rel="noopener noreferrer">Apoie o projeto</a></span>
   </footer>
 
   <dialog id="settings-dialog" aria-labelledby="settings-title">
@@ -147,9 +152,21 @@
         <p class="muted small">O servidor escuta só em 127.0.0.1. Mudar a porta exige reiniciar.</p>
       </fieldset>
 
-      <fieldset disabled>
+      <fieldset>
         <legend>Histórico local</legend>
-        <p class="muted small">Chega na próxima fase. Nada é gravado em disco além de <code>config.json</code> e dos logs.</p>
+        <label class="check"><input type="checkbox" name="historyEnabled"> Guardar nesta máquina uma cópia dos dados que eu consultar</label>
+        <p class="muted small">Desligado por padrão. Ligado, cada consulta grava os dias já fechados na pasta de dados do Overlook,
+          e o que você já viu continua disponível depois que sai da janela do seu plano (no Hobby, 31 dias). Ocupa algum
+          espaço em disco e nada sai desta máquina. Ficam de fora os detalhamentos (páginas, países, navegadores...)
+          e os visitantes únicos do período inteiro, que a Vercel só calcula sobre os próprios dados.</p>
+        <label>Manter por
+          <select name="historyRetention">
+            <option value="0">Sem limite</option><option value="3">3 meses</option><option value="6">6 meses</option>
+            <option value="12">12 meses</option><option value="24">24 meses</option>
+          </select>
+        </label>
+        <p class="muted small" id="history-usage"></p>
+        <div><button type="button" class="btn danger" id="history-clear">Apagar histórico local</button></div>
       </fieldset>
 
       <fieldset>

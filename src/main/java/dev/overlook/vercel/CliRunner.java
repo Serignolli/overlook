@@ -29,15 +29,15 @@ import org.slf4j.LoggerFactory;
  *   <li>lista de argumentos via {@link ProcessBuilder}, nunca string de shell;</li>
  *   <li>{@code --token} é proibido nos argumentos: o token só passa por {@code VERCEL_TOKEN};</li>
  *   <li>o ambiente do subprocesso é montado a partir de uma lista fechada de variáveis;</li>
- *   <li>timeout de 30 s e no máximo 2 processos simultâneos.</li>
+ *   <li>timeout de 60 s e no máximo 6 processos simultâneos (cada chamada passa de 5 s, quase tudo inicialização do Node).</li>
  * </ul>
  */
 public final class CliRunner {
 
     private static final Logger log = LoggerFactory.getLogger(CliRunner.class);
 
-    public static final Duration DEFAULT_TIMEOUT = Duration.ofSeconds(30);
-    public static final int MAX_CONCURRENT = 2;
+    public static final Duration DEFAULT_TIMEOUT = Duration.ofSeconds(60);
+    public static final int MAX_CONCURRENT = 6;
 
     /**
      * Variáveis repassadas ao subprocesso. Além de {@code VERCEL_TOKEN} e {@code PATH}, a CLI

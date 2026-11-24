@@ -7,8 +7,11 @@ import dev.overlook.vercel.error.CliTimeout;
 import dev.overlook.vercel.error.NotLoggedIn;
 import dev.overlook.vercel.error.PlanRequired;
 import dev.overlook.vercel.error.RateLimited;
+import dev.overlook.vercel.error.RetentionLimit;
 import dev.overlook.vercel.error.VercelException;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Converte uma execução com falha em erro tipado.
@@ -22,6 +25,8 @@ import java.util.Locale;
 public final class CliErrorClassifier {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final Pattern RETENTION = Pattern.compile(
+            "latest (\\d+) days|activeSince cannot be more than (\\d+) days", Pattern.CASE_INSENSITIVE);
 
     private final SecretMasker masker;
 
@@ -32,6 +37,10 @@ public final class CliErrorClassifier {
     public VercelException classify(CliResult result) {
         JsonNode error = jsonError(result.stdout());
         if (error != null) {
+            RetentionLimit retention = retention(error);
+            if (retention != null) {
+                return retention;
+            }
             return fromJson(error.path("code").asText(""), error.path("message").asText(""));
         }
         String stderr = result.stderr() == null ? "" : result.stderr().toLowerCase(Locale.ROOT);
@@ -50,13 +59,32 @@ public final class CliErrorClassifier {
 
     VercelException fromJson(String code, String message) {
         String safeMessage = masker.mask(message);
-        return switch (code) {
+        // a CLI 66 manda os códigos em minúsculas ("payment_required"); a 63 mandava em maiúsculas
+        return switch (code.toUpperCase(Locale.ROOT)) {
             case "RATE_LIMITED" -> new RateLimited(30);
             case "PAYMENT_REQUIRED" -> new PlanRequired(safeMessage);
             case "SCHEMA_UNAUTHORIZED", "NOT_AUTHORIZED", "MISSING_USER" -> new NotLoggedIn();
             case "TIMEOUT" -> new CliTimeout();
             default -> new CliFailure(code.isBlank() ? "CLI_ERROR" : code, safeMessage);
         };
+    }
+
+    /**
+     * Limite de histórico do plano. Formatos vistos na CLI 66.6.0:
+     * {@code "The hobby plan grants access to the latest 31 days of Web Analytics data."} e
+     * {@code issues: [{"path": "activeSince", "message": "activeSince cannot be more than 90 days ago"}]}.
+     */
+    static RetentionLimit retention(JsonNode error) {
+        StringBuilder text = new StringBuilder(error.path("message").asText(""));
+        for (JsonNode issue : error.path("issues")) {
+            text.append(' ').append(issue.path("message").asText(""));
+        }
+        Matcher m = RETENTION.matcher(text);
+        if (!m.find()) {
+            return null;
+        }
+        String days = m.group(1) != null ? m.group(1) : m.group(2);
+        return new RetentionLimit(Integer.parseInt(days));
     }
 
     private static JsonNode jsonError(String stdout) {

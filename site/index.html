@@ -113,7 +113,7 @@
       <div class="card">
         <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div>
         <h3>Detalhe por projeto</h3>
-        <p>Páginas mais acessadas, referrers, países, dispositivos e eventos customizados, cada um como top N, com um clique a partir do ranking.</p>
+        <p>Páginas mais acessadas, referrers, países, dispositivos e eventos customizados, cada um como top N, com um clique a partir do ranking. Em "Mais detalhes": sistemas, navegadores, domínios e campanhas UTM.</p>
       </div>
       <div class="card accent">
         <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg></div>
@@ -129,6 +129,11 @@
         <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.5.5l3-3a5 5 0 00-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 00-7.5-.5l-3 3a5 5 0 007 7l1.7-1.7"/></svg></div>
         <h3>Filtros que viram link</h3>
         <p>Escopo, período (24h, 7, 30, 90 dias ou personalizado), produção ou todos os ambientes e seleção de projetos ficam na URL. Salve o link da sua visão favorita.</p>
+      </div>
+      <div class="card accent">
+        <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg></div>
+        <h3>Histórico além do seu plano</h3>
+        <p>Opcional e desligado por padrão. Ligado, cada consulta guarda nesta máquina os dias já fechados, e o que você viu continua no painel depois que sai da janela do plano (no Hobby, 31 dias). Você escolhe por quanto tempo manter e apaga tudo com um botão.</p>
       </div>
     </div>
   </div>
@@ -317,6 +322,7 @@
       <li><div><strong>Nunca toca no seu token.</strong> <span>O login é da Vercel CLI. O Overlook não lê o arquivo de credenciais e nunca passa <code>--token</code> na linha de comando, onde ele apareceria na lista de processos.</span></div></li>
       <li><div><strong>Só você acessa.</strong> <span>O servidor escuta apenas em <code>127.0.0.1</code>, valida o cabeçalho <code>Host</code> contra DNS rebinding e exige um token para qualquer ação que mude algo.</span></div></li>
       <li><div><strong>Zero telemetria.</strong> <span>Sem analytics do app, sem crash report e sem checagem de versão. A telemetria da própria CLI é desligada quando o Overlook a chama.</span></div></li>
+      <li><div><strong>Histórico só com sua permissão.</strong> <span>Nada de analytics vai para o disco sem você ligar o histórico local nas configurações. Ligado, ele fica na pasta de dados do Overlook, nesta máquina, e tem um botão para apagar tudo.</span></div></li>
       <li><div><strong>Logs limpos.</strong> <span>Qualquer coisa com cara de token é mascarada antes de ir para o log local, e o painel nunca mostra a saída crua da CLI.</span></div></li>
     </ul>
   </div>
@@ -345,7 +351,11 @@
       </details>
       <details>
         <summary>O Overlook guarda meus dados?</summary>
-        <p>Nesta versão, não: ele consulta a Vercel na hora e guarda só um cache em memória de 5 minutos. Um histórico local opcional, para manter dados além da retenção do plano, está no plano das próximas versões.</p>
+        <p>Só se você pedir. Por padrão ele consulta a Vercel na hora e guarda apenas um cache em memória. Nas configurações dá para ligar o histórico local: cada consulta grava os dias já fechados num arquivo nesta máquina, e esses dias continuam aparecendo depois que saem da janela do seu plano (31 dias no Hobby, 12 meses no Pro). Você escolhe manter por 3, 6, 12, 24 meses ou sem limite, e apaga tudo com um botão. Detalhamentos (páginas, países...) e visitantes únicos do período inteiro não entram no histórico, porque só a Vercel calcula esses números.</p>
+      </details>
+      <details>
+        <summary>O Overlook sabe qual é o meu plano?</summary>
+        <p>Sabe: a Vercel CLI informa o plano de cada conta e time. O painel mostra o plano ao lado do escopo e desabilita os períodos que a Vercel não devolve (o de 90 dias no Hobby, por exemplo), a não ser que o histórico local cubra esses dias.</p>
       </details>
       <details>
         <summary>É um produto da Vercel?</summary>
@@ -371,7 +381,7 @@
     <span>open source · <a href="https://github.com/Serignolli/overlook/blob/main/LICENSE" target="_blank" rel="noopener">licença MIT</a> · sem vínculo com a Vercel</span>
     <span class="credit">
       Desenvolvido por <a href="https://serignolli.com" target="_blank" rel="noopener noreferrer">Serignolli</a>
-      · <a href="https://buymeacoffee.com/gabrielserignolli" target="_blank" rel="noopener noreferrer">Apoie o projeto</a>
+      · <a href="https://apoie.serignolli.com/" target="_blank" rel="noopener noreferrer">Apoie o projeto</a>
     </span>
   </div>
 </footer>
@@ -383,7 +393,7 @@
     <p>Valeu por baixar o Overlook. Ele é gratuito, open source e sem anúncios. Se ele te poupar a ronda diária pelos projetos no dashboard, considere contribuir com um café para ajudar a manter o projeto.</p>
     <p>E aproveite para conhecer mais sobre mim e meus outros projetos.</p>
     <div class="support-actions">
-      <a class="btn btn-primary" href="https://buymeacoffee.com/gabrielserignolli" target="_blank" rel="noopener noreferrer">Contribuir</a>
+      <a class="btn btn-primary" href="https://apoie.serignolli.com/" target="_blank" rel="noopener noreferrer">Contribuir</a>
       <a class="btn btn-ghost" href="https://serignolli.com" target="_blank" rel="noopener noreferrer">Conhecer serignolli.com</a>
     </div>
     <button class="support-close" id="supportClose" type="button">Agora não</button>

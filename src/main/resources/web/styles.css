@@ -362,6 +362,15 @@ tr.no-data td { color: var(--muted); }
   gap: 16px;
 }
 .breakdowns .panel { overflow-x: auto; }
+.more-details { margin-top: 16px; }
+.more-details > summary {
+  cursor: pointer;
+  color: var(--accent);
+  font-weight: 600;
+  padding: 6px 0 12px;
+}
+.segmented button:disabled { opacity: 0.4; cursor: not-allowed; }
+#plan-badge { align-self: center; }
 .breakdowns .bar-cell { width: 22%; min-width: 48px; }
 .breakdowns .cell-truncate { max-width: 180px; }
 

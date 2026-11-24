@@ -4,6 +4,7 @@ import dev.overlook.analytics.AnalyticsService;
 import dev.overlook.config.AppConfig;
 import dev.overlook.config.ConfigStore;
 import dev.overlook.config.DataDir;
+import dev.overlook.history.HistoryStore;
 import dev.overlook.vercel.CliVercelGateway;
 import dev.overlook.vercel.FixtureVercelGateway;
 import dev.overlook.vercel.VercelGateway;
@@ -87,7 +88,12 @@ public final class App {
         VercelGateway gateway = args.demo()
                 ? FixtureVercelGateway.demo(clock)
                 : CliVercelGateway.system(() -> store.current().vercelCliPath());
-        AnalyticsService service = new AnalyticsService(gateway, clock);
+        // histórico local: só grava com consentimento (desligado por padrão); no demo fica em memória
+        HistoryStore history = args.demo()
+                ? HistoryStore.inMemory(() -> store.current().history().enabled())
+                : new HistoryStore(dataDir.resolve("history"), () -> store.current().history().enabled());
+        AnalyticsService service = new AnalyticsService(gateway, clock, history);
+        service.pruneHistory(config.history().retentionMonths());
 
         AtomicReference<WebServer> server = new AtomicReference<>();
         Runnable quit = () -> {

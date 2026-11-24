@@ -92,7 +92,7 @@ class CliRunnerTest {
 
     @Test
     void concurrencyIsCapped() {
-        assertThat(CliRunner.MAX_CONCURRENT).isEqualTo(2);
-        assertThat(CliRunner.DEFAULT_TIMEOUT).isEqualTo(Duration.ofSeconds(30));
+        assertThat(CliRunner.MAX_CONCURRENT).isEqualTo(6);
+        assertThat(CliRunner.DEFAULT_TIMEOUT).isEqualTo(Duration.ofSeconds(60));
     }
 }

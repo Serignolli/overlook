@@ -21,3 +21,6 @@ desktop.ini
 .playwright-mcp/
 node_modules/
 *.log
+
+# Pacote local gerado (Overlook.exe + runtime), mantido só nesta máquina
+/Overlook/

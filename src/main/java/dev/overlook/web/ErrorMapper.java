@@ -7,6 +7,7 @@ import dev.overlook.vercel.error.CliTimeout;
 import dev.overlook.vercel.error.NotLoggedIn;
 import dev.overlook.vercel.error.PlanRequired;
 import dev.overlook.vercel.error.RateLimited;
+import dev.overlook.vercel.error.RetentionLimit;
 import dev.overlook.vercel.error.UnexpectedOutput;
 import dev.overlook.vercel.error.VercelException;
 import dev.overlook.web.dto.ApiError;
@@ -56,6 +57,9 @@ public final class ErrorMapper {
         }
         if (e instanceof PlanRequired) {
             return 402;
+        }
+        if (e instanceof RetentionLimit) {
+            return 422;
         }
         if (e instanceof UnexpectedOutput) {
             return 502;

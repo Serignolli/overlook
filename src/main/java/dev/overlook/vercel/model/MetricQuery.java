@@ -23,6 +23,12 @@ public record MetricQuery(
         groupBy = groupBy == null ? List.of() : List.copyOf(groupBy);
     }
 
+    /** A mesma consulta começando em outro instante. */
+    public MetricQuery withSince(Instant newSince) {
+        return new MetricQuery(scope, metric, aggregation, groupBy, newSince, until, granularity, production, projectId,
+                limit);
+    }
+
     public boolean allProjects() {
         return projectId == null;
     }

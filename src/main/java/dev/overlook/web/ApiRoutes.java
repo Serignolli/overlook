@@ -38,6 +38,9 @@ public final class ApiRoutes {
         app.get("/api/scopes", this::scopes);
         app.get("/api/projects", this::projects);
         app.get("/api/capabilities", this::capabilities);
+        app.get("/api/limits", this::limits);
+        app.get("/api/history", this::historyStats);
+        app.delete("/api/history", this::clearHistory);
         app.get("/api/overview", this::overview);
         app.get("/api/projects/{id}/breakdown", this::breakdown);
         app.get("/api/projects/{id}/timeseries", this::timeseries);
@@ -68,6 +71,23 @@ public final class ApiRoutes {
 
     private void capabilities(Context ctx) {
         ctx.json(service.capabilities(scope(ctx)));
+    }
+
+    private void limits(Context ctx) {
+        ctx.json(service.limits(scope(ctx)));
+    }
+
+    private void historyStats(Context ctx) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("stats", service.history().stats());
+        body.put("retentionMonths", configStore.current().history().retentionMonths());
+        ctx.json(body);
+    }
+
+    /** Apaga o histórico local inteiro. Não muda a configuração (ligado continua ligado). */
+    private void clearHistory(Context ctx) {
+        service.history().clear();
+        ctx.status(204);
     }
 
     private void overview(Context ctx) {
@@ -101,6 +121,7 @@ public final class ApiRoutes {
         AppConfig before = configStore.current();
         AppConfig saved = configStore.save(incoming);
         service.refresh();
+        service.pruneHistory(saved.history().retentionMonths());
         ctx.json(view(saved.port() != runningPort.getAsInt() || saved.port() != before.port()));
     }
 

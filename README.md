@@ -50,7 +50,10 @@ It runs entirely on your machine and talks to Vercel only through **your own Ver
 
 - **Consolidated view** of every project in a personal account or team: totals with change against the previous period, and a chart with one line per project.
 - **Project ranking** showing who grew, who dropped and who stopped getting visits. Projects with no data are flagged, so you can check whether Web Analytics is enabled.
-- **Project view** with top pages, referrers, countries, devices and custom events, one click away from the ranking.
+- **Project view** with top pages, referrers, countries, devices and custom events, one click away from the ranking, plus operating systems, browsers, hostnames and UTM source/medium/campaign under "More details" (loaded only when opened).
+- **Zoom**: drag across days on a daily chart to open those days hourly (Vercel returns hourly data for up to about 2 days); drag on an hourly chart to zoom in place, double-click to reset.
+- **Plan-aware**: the plan reported by `vercel teams ls` sets how far back you can query (Hobby 31 days, Pro 12 months, Enterprise 24 months, per Vercel's [reporting window](https://vercel.com/docs/analytics/limits-and-pricing)); periods the plan can't reach are disabled.
+- **Optional local history** (off by default): with your consent, every query stores its closed buckets on this machine, so days you already looked at stay available after they leave your plan's window. Choose how long to keep it (3, 6, 12, 24 months or no limit) and clear it with one button.
 - **Flexible periods**: 24 hours, 7, 30 or 90 days, or a custom range; production only or all environments.
 - **Shareable state**: scope, period, environment and selected projects live in the URL, so a favorite view is just a bookmark.
 - **Light and dark themes.**
@@ -116,7 +119,7 @@ overlook --help
 
 With the portable JAR: `java -jar overlook.jar [flags]`.
 
-**Configuration.** Settings live in `~/.overlook/config.json` (`%APPDATA%\overlook\config.json` on Windows) and can be edited from the settings dialog. Command-line flags override the file without changing it. Logs go to `logs/overlook.log` in the same folder.
+**Configuration.** Settings live in `~/.overlook/config.json` (`%APPDATA%\overlook\config.json` on Windows) and can be edited from the settings dialog. Command-line flags override the file without changing it. Logs go to `logs/overlook.log` in the same folder. If you turn on local history, it is stored as one JSON file per scope in `history/` in the same folder.
 
 ## Privacy
 
@@ -128,7 +131,8 @@ Overlook never touches credentials. Authentication belongs to the Vercel CLI, an
 4. **Loopback only.** The server binds to `127.0.0.1` with no option to change it, validates the `Host` header against DNS rebinding, and requires a per-launch CSRF token for any state-changing request.
 5. **Zero telemetry.** No analytics, crash reporting or update checks. The CLI's own telemetry is disabled for its subprocess (`VERCEL_TELEMETRY_DISABLED=1`).
 6. **Clean logs.** CLI output goes through a filter that masks anything that looks like a token.
-7. **Local assets.** No CDN, fonts or external scripts in the dashboard. CSP is `default-src 'self'`.
+7. **History only with consent.** Nothing from your analytics is written to disk unless you turn on local history in the settings, and the same dialog clears it.
+8. **Local assets.** No CDN, fonts or external scripts in the dashboard. CSP is `default-src 'self'`.
 
 ### How to audit
 
@@ -152,7 +156,7 @@ Found a security issue? See [SECURITY.md](SECURITY.md).
 - **Visitors in the consolidated view** are shown as "sum of visitors per project", because the same person may have visited more than one project.
 - **Open bucket.** Today (or the current hour) is partial. The chart marks it as in progress, and changes compare only closed buckets against the same number of buckets in the previous period.
 - Buckets are aligned to **UTC**, like Vercel does.
-- The consolidated view uses a single `vercel metrics --all --group-by projectId` query per metric and period. Results are cached in memory for 5 minutes to stay within rate limits.
+- The consolidated view uses a single `vercel metrics --all --group-by projectId` query per metric and period. Results are cached in memory for 5 minutes (1 hour for periods that already ended) to stay within rate limits, and up to 6 CLI processes run in parallel.
 
 ### Edge Requests vs page views
 
@@ -164,7 +168,8 @@ Edge Requests count every request that reaches Vercel's network, including asset
 - **Bounce rate** is not available through the CLI.
 - **Minimum CLI version** is assumed to be `54.18.0`, the first release after the [June 26, 2026 changelog](https://vercel.com/changelog/query-web-analytics-from-the-vercel-cli). Not yet confirmed against a live account.
 - Metric and dimension names are discovered with `vercel metrics schema vercel.analytics`; dimensions the schema doesn't list are hidden.
-- No local history yet: data beyond your plan's retention is planned for a future release.
+- Local history keeps time series (page views, events, visitors per bucket) but not breakdowns (pages, countries...) or whole-period unique visitors, which only Vercel can compute. It only has the days you actually queried while it was on.
+- Pro with the Web Analytics Plus add-on has a 24-month window, but the CLI doesn't report add-ons, so Overlook assumes 12 months unless Vercel answers otherwise.
 - The dashboard UI is in Portuguese (pt-BR) for now.
 
 ## Build from source
@@ -210,5 +215,5 @@ Bug reports, ideas and pull requests are welcome. Start with [CONTRIBUTING.md](C
 
 <p align="center">
   Created by <a href="https://github.com/Serignolli">Gabriel Serignolli</a>.
-  If Overlook saves you time, consider <a href="https://buymeacoffee.com/gabrielserignolli">supporting the project</a>.
+  If Overlook saves you time, consider <a href="https://apoie.serignolli.com/">supporting the project</a>.
 </p>

@@ -17,7 +17,17 @@ const DIMENSION_TITLES = {
   countries: ['Países', 'País'],
   devices: ['Dispositivos', 'Dispositivo'],
   events: ['Eventos', 'Evento'],
+  os: ['Sistemas operacionais', 'Sistema'],
+  browsers: ['Navegadores', 'Navegador'],
+  hostnames: ['Domínios', 'Domínio'],
+  utmSource: ['UTM source', 'Source'],
+  utmMedium: ['UTM medium', 'Medium'],
+  utmCampaign: ['UTM campaign', 'Campanha'],
 };
+// carregados logo; os outros só quando o usuário abre "Mais detalhes", para não pesar a tela
+const PRIMARY_DIMENSIONS = new Set(['pages', 'referrers', 'countries', 'devices', 'events']);
+const PLAN_NAMES = { hobby: 'Hobby', pro: 'Pro', enterprise: 'Enterprise' };
+const RANGE_DAYS = { '24h': 1, '7d': 7, '30d': 30, '90d': 90 };
 const ANALYTICS_DOCS = 'https://vercel.com/docs/analytics/quickstart';
 
 const nf = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 0 });
@@ -25,6 +35,7 @@ const nfCompact = new Intl.NumberFormat('pt-BR', { notation: 'compact', maximumF
 const pf = new Intl.NumberFormat('pt-BR', { style: 'percent', maximumFractionDigits: 1, signDisplay: 'exceptZero' });
 const dayFmt = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'short', timeZone: 'UTC' });
 const hourFmt = new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' });
+const dayHourFmt = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'UTC' });
 const stampFmt = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'medium' });
 
 const $ = (sel) => document.querySelector(sel);
@@ -42,6 +53,7 @@ const state = {
 };
 let settings = null;
 let capabilities = null;
+let limits = null;
 let projectList = [];
 let charts = [];
 let retryTimer = null;
@@ -153,6 +165,10 @@ function errorBlock(err, onRetry) {
     clearInterval(retryTimer);
     retryTimer = setInterval(tick, 1000);
     tick();
+  } else if (err.code === 'RETENTION_LIMIT') {
+    if (!limits?.historyEnabled) {
+      box.append(el('div', {}, el('button', { class: 'link', type: 'button', onclick: openSettings, text: 'Configurar histórico local' })));
+    }
   } else if (onRetry) {
     box.append(el('div', {}, el('button', { class: 'link', type: 'button', onclick: onRetry, text: 'Tentar de novo' })));
   }
@@ -195,6 +211,7 @@ function syncControls() {
     input.checked = state.projects.has(input.value);
   }
   $('#project-picker').hidden = !!state.project;
+  applyLimits();
 }
 
 function buildPicker() {
@@ -370,14 +387,53 @@ async function boot(first = true) {
 }
 
 async function loadScopeData() {
-  const [projects, caps] = await Promise.all([
-    api(`/api/projects?scope=${encodeURIComponent(state.scope)}`),
-    api(`/api/capabilities?scope=${encodeURIComponent(state.scope)}`),
+  const scope = encodeURIComponent(state.scope);
+  const [projects, caps, lim] = await Promise.all([
+    api(`/api/projects?scope=${scope}`),
+    api(`/api/capabilities?scope=${scope}`),
+    api(`/api/limits?scope=${scope}`),
   ]);
   projectList = projects.projects.slice().sort((a, b) => a.name.localeCompare(b.name));
   capabilities = caps;
+  limits = lim;
   buildPicker();
   syncControls();
+}
+
+async function reloadLimits() {
+  try {
+    limits = await api(`/api/limits?scope=${encodeURIComponent(state.scope)}`);
+  } catch {
+    // mantém o que tinha
+  }
+  syncControls();
+}
+
+/** Selo do plano e períodos que o plano não alcança (liberados quando há histórico local). */
+function applyLimits() {
+  const badge = $('#plan-badge');
+  const days = limits?.retentionDays;
+  if (limits?.plan || days) {
+    const plan = PLAN_NAMES[limits.plan] || limits.plan || 'Plano';
+    badge.textContent = days ? `${plan} · ${days} dias` : plan;
+    badge.title = (days ? `A Vercel libera os últimos ${days} dias de Web Analytics neste escopo.` : '')
+      + (limits.historyEnabled ? ' Histórico local ligado.' : '');
+    badge.hidden = false;
+  } else {
+    badge.hidden = true;
+  }
+  const blocked = (n) => !limits?.historyEnabled && days && n > days - 1;
+  for (const b of document.querySelectorAll('#range-group button')) {
+    const n = RANGE_DAYS[b.dataset.range];
+    const off = n != null && blocked(n);
+    b.disabled = !!off;
+    b.title = off ? `O plano libera só os últimos ${days} dias. Ligue o histórico local nas configurações para guardar mais.` : '';
+  }
+  // no período personalizado, a data mínima é o que a Vercel ou o histórico local alcançam
+  const floors = [limits?.availableSince, limits?.historyEnabled ? limits?.historyOldest : null].filter(Boolean);
+  const min = floors.length ? floors.sort()[0].slice(0, 10) : '';
+  $('#since-input').min = min;
+  $('#until-input').min = min;
 }
 
 function hideViews() {
@@ -494,7 +550,22 @@ function renderOverviewChart(data, selected) {
   if (hiddenSelected.length) {
     legend.append(el('span', { class: 'legend-item', text: `${hiddenSelected.length} selecionado(s) fora do top 8 do gráfico` }));
   }
-  $('#chart-note').textContent = `${rangeLabel()} · buckets em UTC`;
+  $('#chart-note').textContent = `${rangeLabel()} · buckets em UTC · ${zoomHint(data.range.granularity)}`;
+}
+
+function zoomHint(granularity) {
+  return granularity === '1h' ? 'arraste para aproximar, duplo clique para voltar' : 'arraste sobre os dias para ver por hora';
+}
+
+/** Seleção num gráfico diário: vira um período personalizado só com os dias escolhidos. */
+function zoomToDays(fromTs, toTs) {
+  const day = (ts) => new Date(ts * 1000).toISOString().slice(0, 10);
+  state.range = 'custom';
+  state.since = day(fromTs);
+  state.until = day(toTs);
+  writeUrl();
+  syncControls();
+  render();
 }
 
 function swatch(color) {
@@ -563,6 +634,14 @@ async function renderProject() {
     url.hidden = true;
   }
 
+  // o servidor tira eventos das capacidades quando o plano recusa; vem do cache, sem chamar a CLI
+  try {
+    capabilities = await api(`/api/capabilities?scope=${encodeURIComponent(state.scope)}`);
+  } catch {
+    // segue com as capacidades que já tinha
+  }
+  if (token !== loadToken) return;
+
   const metrics = [['pageViews', 'Page views']];
   if (capabilities?.eventMetric) metrics.push(['events', 'Eventos']);
   if (capabilities?.visitors) metrics.push(['visitors', 'Visitantes únicos']);
@@ -570,16 +649,21 @@ async function renderProject() {
   $('#project-chart').replaceChildren(el('div', { class: 'skeleton chart' }));
   $('#project-chart-note').textContent = rangeLabel();
 
-  const dims = Object.keys(capabilities?.dimensions || {});
-  const panels = new Map();
-  $('#breakdowns').replaceChildren(...dims.map((key) => {
-    const [title] = DIMENSION_TITLES[key] || [key];
-    const body = el('div', {}, el('div', { class: 'skeleton' }), el('div', { class: 'skeleton' }));
-    panels.set(key, body);
-    return el('section', { class: 'panel' }, el('div', { class: 'panel-head' }, el('h2', { text: title })), body);
-  }));
-
+  const allDims = Object.keys(capabilities?.dimensions || {});
+  const dims = allDims.filter((k) => PRIMARY_DIMENSIONS.has(k));
+  const extraDims = allDims.filter((k) => !PRIMARY_DIMENSIONS.has(k));
   const base = `/api/projects/${encodeURIComponent(state.project)}`;
+  const loadPanels = breakdownPanels($('#breakdowns'), dims, base, token);
+  const more = $('#more-details');
+  more.hidden = !extraDims.length;
+  more.open = false;
+  const loadExtra = breakdownPanels($('#breakdowns-extra'), extraDims, base, token);
+  more.ontoggle = () => {
+    if (more.open && token === loadToken) {
+      more.ontoggle = null;
+      loadExtra();
+    }
+  };
   const series = metrics.map(([key]) => api(`${base}/timeseries?${queryParams({ metric: key })}`));
   const results = await Promise.allSettled(series);
   if (token !== loadToken) return;
@@ -596,6 +680,7 @@ async function renderProject() {
   if (pv.status === 'fulfilled') {
     const ts = pv.value;
     $('#fetched-at').textContent = `Dados de ${stampFmt.format(new Date(ts.fetchedAt))}${ts.stale ? ' (cache)' : ''}`;
+    showWarnings(ts.historyNote ? [ts.historyNote] : []);
     const openIndex = ts.buckets.findIndex((b) => b.inProgress);
     const chart = $('#project-chart');
     chart.replaceChildren();
@@ -605,13 +690,25 @@ async function renderProject() {
     } else {
       drawChart(chart, ts.buckets.map((b) => b.t), [{ name: 'Page views', values: ts.buckets.map((b) => b.value) }],
         [palette()[0]], openIndex >= 0 ? openIndex : null, ts.range.granularity, true);
-      $('#project-chart-note').textContent = `${rangeLabel()} · buckets em UTC${openIndex >= 0 ? ' · último bucket em andamento' : ''}`;
+      $('#project-chart-note').textContent = `${rangeLabel()} · buckets em UTC${openIndex >= 0 ? ' · último bucket em andamento' : ''} · ${zoomHint(ts.range.granularity)}`;
     }
   } else {
     $('#project-chart').replaceChildren(errorBlock(pv.reason, () => renderProject()));
   }
 
-  await Promise.all(dims.map(async (key) => {
+  await loadPanels();
+}
+
+/** Monta os painéis de detalhamento com esqueleto e devolve a função que busca os dados. */
+function breakdownPanels(container, keys, base, token) {
+  const panels = new Map();
+  container.replaceChildren(...keys.map((key) => {
+    const [title] = DIMENSION_TITLES[key] || [key];
+    const body = el('div', {}, el('div', { class: 'skeleton' }), el('div', { class: 'skeleton' }));
+    panels.set(key, body);
+    return el('section', { class: 'panel' }, el('div', { class: 'panel-head' }, el('h2', { text: title })), body);
+  }));
+  return () => Promise.all(keys.map(async (key) => {
     const body = panels.get(key);
     try {
       const data = await api(`${base}/breakdown?${queryParams({ dim: key })}`);
@@ -661,24 +758,29 @@ function destroyCharts() {
 
 function drawChart(container, isoBuckets, series, colors, openIndex, granularity, fill = false) {
   const xs = isoBuckets.map((t) => Date.parse(t) / 1000);
-  const step = granularity === '1h' ? 3600 : 86400;
+  const hourly = granularity === '1h';
+  const step = hourly ? 3600 : 86400;
   const text = cssVar('--muted');
   const grid = cssVar('--border');
   const band = cssVar('--open-band');
-  const fmtX = (ts) => (granularity === '1h' ? hourFmt : dayFmt).format(new Date(ts * 1000));
+  const fmtX = (ts) => (hourly ? dayHourFmt : dayFmt).format(new Date(ts * 1000));
+  // eixo por hora: a hora, e o dia na virada da meia-noite
+  const fmtAxis = (ts) => (!hourly ? dayFmt : ts % 86400 === 0 ? dayFmt : hourFmt).format(new Date(ts * 1000));
 
   const opts = {
     width: Math.max(280, container.clientWidth),
     height: 300,
     tzDate: (ts) => uPlot.tzDate(new Date(ts * 1e3), 'Etc/UTC'),
     legend: { show: false },
-    cursor: { points: { size: 6 } },
+    // por hora: aproxima no próprio gráfico (duplo clique volta). Por dia: a seleção vira um
+    // período personalizado, que a Vercel devolve por hora quando cabe em até 2 dias.
+    cursor: { points: { size: 6 }, drag: { x: xs.length > 1, y: false, setScale: hourly } },
     scales: { x: { time: true, range: (u, min, max) => [min, max + (xs.length === 1 ? step : 0)] } },
     axes: [
       { stroke: text, grid: { stroke: grid, width: 1 }, ticks: { stroke: grid }, space: 60,
-        // só múltiplos do bucket, para não repetir rótulos de dia
-        incrs: [1, 2, 3, 6, 7, 12, 14, 30, 60].map((n) => n * step),
-        values: (u, splits) => splits.map(fmtX) },
+        // só múltiplos do bucket, para não repetir rótulos
+        incrs: (hourly ? [1, 2, 3, 6, 12, 24, 48] : [1, 2, 3, 7, 14, 30, 60]).map((n) => n * step),
+        values: (u, splits) => splits.map(fmtAxis) },
       { stroke: text, grid: { stroke: grid, width: 1 }, ticks: { show: false }, size: 56,
         values: (u, splits) => splits.map((v) => nfCompact.format(v)) },
     ],
@@ -700,6 +802,16 @@ function drawChart(container, isoBuckets, series, colors, openIndex, granularity
         ctx.fillStyle = band;
         ctx.fillRect(Math.max(u.bbox.left, x0), u.bbox.top, x1 - Math.max(u.bbox.left, x0), u.bbox.height);
         ctx.restore();
+      }],
+      setSelect: [(u) => {
+        if (hourly || u.select.width < 4) return;
+        const lo = u.posToVal(u.select.left, 'x');
+        const hi = u.posToVal(u.select.left + u.select.width, 'x');
+        // buckets cujo início cai na seleção (ou o mais próximo, se a seleção for menor que um dia)
+        let picked = xs.filter((x) => x >= lo - step / 2 && x <= hi);
+        if (!picked.length) picked = [xs.reduce((a, b) => (Math.abs(b - lo) < Math.abs(a - lo) ? b : a))];
+        u.setSelect({ left: 0, width: 0, top: 0, height: 0 }, false);
+        zoomToDays(picked[0], picked[picked.length - 1]);
       }],
     },
     plugins: [tooltipPlugin(series, colors, fmtX, openIndex, xs)],
@@ -755,9 +867,40 @@ function openSettings() {
   form.autoRefreshInterval.value = c.autoRefresh.intervalMinutes;
   form.port.value = c.port;
   form.openBrowserOnStart.checked = c.openBrowserOnStart;
+  form.historyEnabled.checked = c.history.enabled;
+  form.historyRetention.value = String(c.history.retentionMonths);
+  resetClearButton();
+  loadHistoryUsage();
   $('#settings-path').textContent = `Arquivo: ${settings.configPath}${settings.demo ? ' · modo demo' : ''}`;
   $('#settings-error').textContent = '';
   $('#settings-dialog').showModal();
+}
+
+const kbFmt = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 });
+const dateFmt = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeZone: 'UTC' });
+
+async function loadHistoryUsage() {
+  const out = $('#history-usage');
+  out.textContent = '';
+  try {
+    const { stats } = await api('/api/history');
+    if (!stats.scopes.length) {
+      out.textContent = settings?.demo ? 'Modo demo: o histórico fica só na memória.' : 'Nada guardado ainda.';
+      return;
+    }
+    const size = stats.bytes < 1024 * 1024 ? `${kbFmt.format(stats.bytes / 1024)} KB` : `${kbFmt.format(stats.bytes / 1024 / 1024)} MB`;
+    const ranges = stats.scopes.map((s) => `${s.scope}: ${dateFmt.format(new Date(s.oldest))} a ${dateFmt.format(new Date(s.newest))}`);
+    out.textContent = `Guardado: ${size}. ${ranges.join(' · ')}.`;
+  } catch (err) {
+    out.textContent = err.message;
+  }
+}
+
+let clearArmed = null;
+function resetClearButton() {
+  clearTimeout(clearArmed);
+  clearArmed = null;
+  $('#history-clear').textContent = 'Apagar histórico local';
 }
 
 function wireSettings() {
@@ -773,6 +916,23 @@ function wireSettings() {
     showWarnings(['O Overlook foi encerrado. Pode fechar esta aba.']);
   });
   $('#settings-cancel').addEventListener('click', () => $('#settings-dialog').close());
+  // apagar pede um segundo clique (sem confirm() do navegador)
+  $('#history-clear').addEventListener('click', async () => {
+    const btn = $('#history-clear');
+    if (!clearArmed) {
+      btn.textContent = 'Clique de novo para apagar tudo';
+      clearArmed = setTimeout(resetClearButton, 5000);
+      return;
+    }
+    resetClearButton();
+    try {
+      await api('/api/history', { method: 'DELETE' });
+      $('#history-usage').textContent = 'Histórico local apagado.';
+      await reloadLimits();
+    } catch (err) {
+      $('#settings-error').textContent = err.message;
+    }
+  });
   $('#settings-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.target;
@@ -786,11 +946,16 @@ function wireSettings() {
       vercelCliPath: form.vercelCliPath.value.trim() || null,
       autoRefresh: { enabled: form.autoRefreshEnabled.checked, intervalMinutes: Number(form.autoRefreshInterval.value) },
       openBrowserOnStart: form.openBrowserOnStart.checked,
+      history: { enabled: form.historyEnabled.checked, retentionMonths: Number(form.historyRetention.value) },
     };
     try {
       settings = await api('/api/settings', { method: 'PUT', body });
       setupAutoRefresh();
       $('#settings-dialog').close();
+      if (body.history.enabled !== c.history.enabled) {
+        await reloadLimits();
+        render();
+      }
       if (settings.requiresRestart) {
         showWarnings([`A nova porta (${settings.config.port}) vale depois de reiniciar o Overlook.`]);
       }

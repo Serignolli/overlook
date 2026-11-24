@@ -67,12 +67,30 @@ public final class Results {
                             boolean stale) {
     }
 
-    /** @param source {@code vercel} na Fase 1; {@code local} quando vier do histórico */
+    /** @param source {@code vercel}, ou {@code local} quando veio do histórico local */
     public record Bucket(Instant t, double value, String source, boolean inProgress) {
     }
 
-    /** @param total soma dos buckets para métricas aditivas; para únicos, valor do período inteiro vindo da Vercel */
+    /**
+     * @param total       soma dos buckets para métricas aditivas; para únicos, valor do período inteiro vindo da
+     *                    Vercel ({@code null} quando parte do período veio do histórico local)
+     * @param historyNote aviso quando parte do período veio do histórico local, ou {@code null}
+     */
     public record Timeseries(String projectId, String metric, String aggClass, RangeInfo range, List<Bucket> buckets,
-                             Double total, String totalNote, boolean hasData, Instant fetchedAt, boolean stale) {
+                             Double total, String totalNote, boolean hasData, Instant fetchedAt, boolean stale,
+                             String historyNote) {
+    }
+
+    /**
+     * Quanto dá para consultar neste escopo.
+     *
+     * @param plan           plano informado por {@code vercel teams ls} ({@code hobby}, {@code pro}...), ou {@code null}
+     * @param retentionDays  dias que a Vercel libera, pelo plano ou aprendido com a própria Vercel; {@code null} se
+     *                       desconhecido
+     * @param availableSince primeiro instante que a Vercel ainda devolve, ou {@code null}
+     * @param historyOldest  início mais antigo guardado no histórico local deste escopo, ou {@code null}
+     */
+    public record Limits(String scope, String plan, Integer retentionDays, Instant availableSince,
+                         boolean historyEnabled, Instant historyOldest) {
     }
 }

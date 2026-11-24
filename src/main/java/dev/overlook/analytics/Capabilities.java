@@ -41,6 +41,18 @@ public record Capabilities(
         DIMENSIONS.put("countries", new DimensionSpec(false, List.of("country")));
         DIMENSIONS.put("devices", new DimensionSpec(false, List.of("deviceType", "device")));
         DIMENSIONS.put("events", new DimensionSpec(true, List.of("eventName")));
+        // extras: a UI carrega estes só quando o usuário abre "Mais detalhes"
+        DIMENSIONS.put("os", new DimensionSpec(false, List.of("osName")));
+        DIMENSIONS.put("browsers", new DimensionSpec(false, List.of("browserName")));
+        DIMENSIONS.put("hostnames", new DimensionSpec(false, List.of("requestHostname")));
+        DIMENSIONS.put("utmSource", new DimensionSpec(false, List.of("utmSource")));
+        DIMENSIONS.put("utmMedium", new DimensionSpec(false, List.of("utmMedium")));
+        DIMENSIONS.put("utmCampaign", new DimensionSpec(false, List.of("utmCampaign")));
+    }
+
+    /** Dimensões de UTM: visitas sem UTM vêm com valor vazio e não entram no ranking. */
+    public static boolean isUtmDimension(String key) {
+        return key != null && key.startsWith("utm");
     }
 
     public static Capabilities from(SchemaInfo schema) {
@@ -68,6 +80,13 @@ public record Capabilities(
                     .ifPresent(name -> dims.put(key, name));
         });
         return new Capabilities(pageViews.id(), events.map(MetricSchema::id).orElse(null), visitors, projectDim, dims);
+    }
+
+    /** Mesmas capacidades sem a métrica e as dimensões de eventos (quando o plano não libera). */
+    public Capabilities withoutEvents() {
+        Map<String, String> dims = new LinkedHashMap<>(dimensions);
+        dims.keySet().removeIf(this::isEventDimension);
+        return new Capabilities(pageViewMetric, null, visitors, projectDimension, dims);
     }
 
     public boolean events() {
